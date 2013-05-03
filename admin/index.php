@@ -28,6 +28,7 @@
     <table id="main_table" class="table table-bordered table-hover">
     </table>
 <script type="text/javascript" src="scripts/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="scripts/const.js"></script>
 <script type="text/javascript" src="scripts/index.js"></script>
 </body>
 </html>

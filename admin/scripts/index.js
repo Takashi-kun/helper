@@ -1,19 +1,34 @@
-var AJAX_URL = 'http://dev.helper/admin/api.php';
 $(function() {
     init();
 });
 
 var init = function() {
+    $(window).on('load', firedLoad);
+
+    $(window).on('hashchange', firedLoad);
+
     $('.links').on('click', function(e){
-        clickLinks(e.target);
+        firedClick(e.target);
     });
 }
 
-var clickLinks = function(target) {
-    var hrefStr = new String(target.href);
+var getURLHash = function(href) {
+    var hrefStr = new String(href);
     var hrefArr = hrefStr.split('#');
 
-    getAjax(AJAX_URL, 'GET', {'type': hrefArr[1]}, makeTable);
+    if (typeof hrefArr[1] !== 'string') {
+        return 'user';
+    }
+
+    return hrefArr[1];
+}
+
+var firedClick = function(target) {
+    getAjax(AJAX_URL, 'GET', {'type': getURLHash(target.href)}, makeTable);
+}
+
+var firedLoad = function() {
+    getAjax(AJAX_URL, 'GET', {'type': getURLHash(location.href)}, makeTable);
 }
 
 var getAjax = function(sendUrl, sendType, sendData, callBackFunc) {

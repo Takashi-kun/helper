@@ -1,0 +1,1 @@
+var AJAX_URL = 'http://dev.helper/admin/api.php';
