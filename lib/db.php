@@ -1,0 +1,84 @@
+<?php
+
+class DbWrap {
+
+    private $pdo;
+    private $stmt;
+
+    public function __construct() {
+        try {
+            $this->pdo = new PDO('mysql:dbname=HELPERDB;host=localhost;', 'helper', 'helperpass');
+            $this->stmt = $this->pdo->query('SET NAMES utf8;');
+        } catch (PDOException $e) {
+            error_log($e->getMessage() . ' ' . strtotime('now'));
+        }
+    }
+
+    public function getRegistUser($user_name) {
+        $this->stmt = $this->pdo->prepare('SELECT * FROM user_profile WHERE user_name = :user_name');
+        $this->stmt->execute(
+            array(
+                'user_name' => $user_name
+            )
+        );
+        $result = $this->stmt->fetch(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    private function checkDupplicateHelpLog($user_id) {
+        $this->stmt = $this->pdo->prepare('SELECT COUNT(id) AS cnt FROM help_log WHERE user_profile_id = :user_id AND is_solved = 0');
+        $this->stmt->execute(
+            array(
+                'user_id' => $user_id
+            )
+        );
+        $result = $this->stmt->fetch(PDO::FETCH_ASSOC);
+        if (intval($result['cnt']) !== 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public function insertHelpLog($data) {
+        $flg = $this->checkDupplicateHelpLog($data['user_id']);
+        if ($flg === true) {
+            return -5;
+        }
+
+        $sql = 'INSERT INTO help_log(user_profile_id, priority) VALUES (:user_profile_id, :priority)';
+        $placeholder = array(
+                            'user_profile_id' => $data['user_id'],
+                            'priority' => $data['priority']
+                        );
+        return $this->insert($sql, $placeholder);
+   }
+
+    public function insertQuestionLog($data) {
+        $sql = 'INSERT INTO question_log(user_profile_id, body) VALUES (:user_profile_id, :body)';
+        $placeholder = array(
+                            'user_profile_id' => $data['user_id'],
+                            'body' => $data['body']
+                        );
+        return $this->insert($sql, $placeholder);
+    }
+
+    private function insert($sql, $placeholder) {
+         try {
+            $this->pdo->beginTransaction();
+            $this->stmt = $this->pdo->prepare($sql);
+            $this->stmt->execute($placeholder);
+            $this->pdo->commit();
+            return true;
+        } catch (PDOException $e) {
+            $this->pdo->rollback();
+            error_log($e->getMessage() . ' ' . strtotime('now'));
+            return false;
+        }
+    }
+
+    public function __destruct() {
+        $this->pdo = null;
+        $this->stmt = null;
+    }
+
+}
