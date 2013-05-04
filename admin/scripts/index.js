@@ -5,9 +5,13 @@ $(function() {
 });
 
 var init = function() {
-    $(window).on('load', firedLoad);
+    $(window).on('load', function() {
+        firedLoad(true);
+    });
 
-    $(window).on('hashchange', firedLoad);
+    $(window).on('hashchange', function() {
+        firedLoad(true);
+    });
 
     $('.links').on('click', function(e){
         firedClickNavLink(e.target);
@@ -48,7 +52,10 @@ var firedClickNavLink = function(target) {
     getAjax(AJAX_URL, 'GET', {'type': type, 'detail': detail, 'offset': offset}, makeTable);
 };
 
-var firedLoad = function() {
+var firedLoad = function(flg) {
+    if (flg === true) {
+        offset = 0;
+    }
     var detail;
     var type = getURLHash(location.href);
     $('.top_links').removeClass('active');
@@ -122,7 +129,7 @@ var makePaging = function(count) {
 
 var firedClickPaging = function(target) {
     offset = (Number(target.children().text()) - 1) * LIMIT_NUM;
-    firedLoad();
+    firedLoad(false);
 }
 
 var errorAjax = function(msg) {
