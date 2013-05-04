@@ -55,10 +55,32 @@ function displayHelp() {
     element_priority_select.value = localStorage['helperHelping'];
 }
 
+function processConfirm(response) {
+    var data = JSON.parse(response);
+    // まだHelpしていない時
+    if (data['code'] === 1) {
+        delete localStorage['helperHelping'];
+        removeClass(element_post_button, 'display_none');
+        addClass(element_posting_button, 'display_none');
+        element_priority_select.disabled = false;
+    } else {
+        localStorage['helperHelping'] = priority;
+        addClass(element_post_button, 'display_none');
+        removeClass(element_posting_button, 'display_none');
+        element_priority_select.disabled = true;
+    }
+}
+
+function confirmStatus() {
+    request(SERVER + '/confirm.php', 'POST',
+           {user_name: user_name}, processConfirm, processError);
+}
+
 function afterLogin() {
     removeClass(element_post_form, 'display_none');
     addClass(element_login_form, 'display_none');
     displayHelp();
+    confirmStatus();
 }
 
 function processError(response) {
