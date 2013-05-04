@@ -10,4 +10,8 @@ class Constants {
         -4 => 'Missed add question',
         -5 => 'Already added help'
     );
+
+    const DB_HOST = 'mysql:dbname=HELPERDB;host=localhost;';
+    const DB_USER = 'helper';
+    const DB_PASS = 'helperpass';
 }
