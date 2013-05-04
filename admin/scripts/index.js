@@ -1,4 +1,5 @@
 var offset = 0;
+var timerId;
 
 $(function() {
     init();
@@ -36,7 +37,7 @@ var getURLHash = function(href) {
     var hrefArr = hrefStr.split('#');
 
     if (typeof hrefArr[1] !== 'string') {
-        return 'user';
+        return 'help';
     }
 
     return hrefArr[1];
@@ -70,6 +71,17 @@ var firedLoad = function(flg) {
         detail = $('.help_detail.active').val();
     }
     getAjax(AJAX_URL, 'GET', {'type': type, 'detail': detail, 'offset': offset}, makeTable);
+
+    if (getURLHash(location.href) === 'help') {
+        console.log('FIRED');
+        setTimeout(function() {
+            timerId = setInterval(function() {
+                firedLoad(true);
+            }, 10000);
+        }, 10000);
+    } else {
+        clearInterval(timerId);
+    }
 };
 
 var changeHelpDetailView = function(type) {
@@ -93,7 +105,6 @@ var firedClickSolve = function(target) {
 };
 
 var getAjax = function(sendUrl, sendType, sendData, callBackFunc) {
-    // ingicater_start();
     showLoading();
     $.ajax({
         dataType: 'json',
@@ -114,6 +125,10 @@ var getAjax = function(sendUrl, sendType, sendData, callBackFunc) {
 
 var makePaging = function(count) {
     $('.pagination ul').text('');
+    if (count <= LIMIT_NUM) {
+        return;
+    }
+
     var pagingNum = Math.floor(count/LIMIT_NUM) + 1;
     for (var i = 1; i <= pagingNum; i++) {
         var li = $('<li/>');

@@ -10,7 +10,7 @@ class Util extends Constants {
     }
 
     public static function validate_priority($priority) {
-        if ($priority === '1' || $priority === '2' || $priority === '3') {
+        if (preg_match('/^\d+$/', $priority) === 1) {
             return true;
         }
         return false;

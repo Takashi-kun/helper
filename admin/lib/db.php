@@ -14,8 +14,8 @@ class DbWrap {
         }
     }
 
-    public function callMethod($sql_base, $limit, $offset) {
-        $sql_base .= ' LIMIT ' . $limit . ' OFFSET ' . $offset;
+    public function callMethod($sql_base, $offset) {
+        $sql_base .= ' LIMIT ' . Constants::LIMIT_NUMBER . ' OFFSET ' . $offset;
         return $this->getDBData($sql_base);
     }
 

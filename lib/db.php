@@ -25,7 +25,13 @@ class DbWrap {
         return $result;
     }
 
-    public function checkDupplicateHelpLog($user_id) {
+    public function getPriorityAll() {
+        $this->stmt = $this->pdo->prepare('SELECT id, body FROM priority_mst');
+        $this->stmt->execute();
+        return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    private function checkDupplicateHelpLog($user_id) {
         $this->stmt = $this->pdo->prepare('SELECT COUNT(id) AS cnt FROM help_log WHERE user_profile_id = :user_id AND is_solved = 0');
         $this->stmt->execute(
             array(
@@ -35,6 +41,20 @@ class DbWrap {
         $result = $this->stmt->fetch(PDO::FETCH_ASSOC);
         if (intval($result['cnt']) !== 0) {
             return true;
+        }
+        return false;
+    }
+
+    public function confirmDupplicateHelpLog($user_id) {
+        $this->stmt = $this->pdo->prepare('SELECT priority FROM help_log WHERE user_profile_id = :user_id AND is_solved = 0');
+        $this->stmt->execute(
+            array(
+                'user_id' => $user_id
+            )
+        );
+        $result = $this->stmt->fetch(PDO::FETCH_ASSOC);
+        if (isset($result['priority']) !== false) {
+            return $result['priority'];
         }
         return false;
     }
