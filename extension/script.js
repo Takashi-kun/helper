@@ -80,12 +80,30 @@ function confirmStatus() {
            {user_name: user_name}, processConfirm, processError);
 }
 
+function processPriority(response) {
+    var choices = JSON.parse(response);
+    element_priority_select.textContent = '';
+    for (var i in choices) {
+        var option = document.createElement('option');
+        if (typeof(choices[i]['id']) !== 'undefined' && choices[i]['id'] !== null) {
+            option.value = choices[i]['id'];
+            option.textContent = choices[i]['body'];
+            element_priority_select.appendChild(option);
+        }
+    }
+}
+
+function displayPriority() {
+    request(SERVER + '/priority.php', 'POST', '', processPriority, processError);
+}
+
 function afterLogin() {
     removeClass(element_post_form, 'display_none');
     addClass(element_login_form, 'display_none');
     user_name = localStorage['helperUserName'];
     displayHelp();
-    confirmStatus();
+    // confirmStatus();
+    displayPriority();
 }
 
 function processError(response) {
