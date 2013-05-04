@@ -164,13 +164,14 @@ var makeTable = function(data, sendData) {
         var tr = $('<tr/>');
         var isSoloved = false;
         for (var key in obj) {
+            if (key === 'is_solved' && obj[key] === '1') {
+                isSoloved = true;
+                continue;
+            }
             var td = $('<td/>');
             td.text(obj[key]);
             td.appendTo(tr);
-            if (key === 'is_solved' && obj[key] === '1') {
-                isSoloved = true;
-            }
-        }
+       }
 
         var td = $('<td/>');
         if (sendData['type'] === 'help' && isSoloved === false) {
