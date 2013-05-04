@@ -5,6 +5,8 @@ require_once(dirname(__FILE__) . '/lib/util.php');
 $priority = $_POST['help_priority'];
 $user_name = $_POST['user_name'];
 
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: text/plain; charset=UTF-8');
 
 $db = new DbWrap();
 

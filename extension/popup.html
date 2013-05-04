@@ -6,25 +6,23 @@
     <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
-    <h2>ログイン</h2>
     <form method="post" id="login_form">
         <input type="text" name="user_name" placeholder="メールアドレスの@の前を入力してください" id="user_name">
         <button id="login_button">ログイン</button>
+        <p id="error_message"></p>
     </form>
-    <!--     <form action="http://dev.helper/help.php" method="post"> -->
-    <!--         <label> -->
-    <!--             <input type="radio" name="help_priority" value="3" checked>高め -->
-    <!--         </label> -->
-    <!--         <label> -->
-    <!--             <input type="radio" name="help_priority" value="2">普通 -->
-    <!--         </label> -->
-    <!--         <label> -->
-    <!--             <input type="radio" name="help_priority" value="1">低め -->
-    <!--         </label> -->
-    <!--         <input type="text" name="user_name" placeholder="あなたの名前"> -->
-    <!--         <input type="submit" name="help"> -->
-    <!--     </form> -->
-    <!-- </p> -->
+    <form method="post" id="post_form" class="display_none">
+        <label>
+            <input type="radio" name="help_priority" value="3" checked>高
+        </label>
+        <label>
+            <input type="radio" name="help_priority" value="2">中
+        </label>
+        <label>
+            <input type="radio" name="help_priority" value="1">低
+        </label>
+        <button id="post_button">Help!!!!</button>
+    </form>
     <script type="text/javascript" src="const.js"></script>
     <script type="text/javascript" src="script.js"></script>
 </body>

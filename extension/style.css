@@ -10,3 +10,6 @@ body {
     width: 200px;
 }
 
+.display_none {
+    display: none;
+}
