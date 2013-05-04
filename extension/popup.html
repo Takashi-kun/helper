@@ -7,21 +7,27 @@
 </head>
 <body>
     <form method="post" id="login_form">
-        <input type="text" name="user_name" placeholder="メールアドレスの@の前を入力してください" id="user_name">
+        <input type="text" name="user_name" placeholder="メールアドレスの@より前を入力" id="user_name">
         <button id="login_button">ログイン</button>
-        <p id="error_message"></p>
+        <p id="error_message" class="display_none"></p>
     </form>
     <form method="post" id="post_form" class="display_none">
-        <label>
-            <input type="radio" name="help_priority" value="3" checked>高
-        </label>
-        <label>
-            <input type="radio" name="help_priority" value="2">中
-        </label>
-        <label>
-            <input type="radio" name="help_priority" value="1">低
-        </label>
-        <button id="post_button">Help!!!!</button>
+        <select name="help_priority">
+            <option value="3">研修について行けてない</option>
+            <option value="2">実は聞きたいことがある</option>
+            <option value="1">少し疑問点がある</option>
+        </select>
+        <!-- <label> -->
+        <!--     <input type="radio" name="help_priority" value="3"  class="radio_button" checked>高 -->
+        <!-- </label> -->
+        <!-- <label> -->
+        <!--     <input type="radio" name="help_priority" value="2" class="radio_button">中 -->
+        <!-- </label> -->
+        <!-- <label> -->
+        <!--     <input type="radio" name="help_priority" value="1" class="radio_button">低 -->
+        <!-- </label> -->
+        <button id="post_button">ヘルプ</button>
+        <button id="logout_button">x</button>
     </form>
     <script type="text/javascript" src="const.js"></script>
     <script type="text/javascript" src="script.js"></script>
