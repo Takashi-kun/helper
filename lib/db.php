@@ -25,7 +25,7 @@ class DbWrap {
         return $result;
     }
 
-    private function checkDupplicateHelpLog($user_id) {
+    public function checkDupplicateHelpLog($user_id) {
         $this->stmt = $this->pdo->prepare('SELECT COUNT(id) AS cnt FROM help_log WHERE user_profile_id = :user_id AND is_solved = 0');
         $this->stmt->execute(
             array(
