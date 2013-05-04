@@ -1,6 +1,6 @@
 {
     "name": "CY Helper",
-    "description": "講師のみんなが助けてくれるはず",
+    "description": "講師と新卒をつなぎます",
     "manifest_version": 2,
     "version": "1.0",
     "browser_action": {
