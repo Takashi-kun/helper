@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
-    <form method="post" id="login_form">
+    <form method="post" id="login_form" class="display_none">
         <input type="text" name="user_name" placeholder="メールアドレスの@より前を入力" id="user_name">
         <button id="login_button">ログイン</button>
         <p id="error_message" class="display_none"></p>
@@ -17,17 +17,9 @@
             <option value="2">実は聞きたいことがある</option>
             <option value="1">少し疑問点がある</option>
         </select>
-        <!-- <label> -->
-        <!--     <input type="radio" name="help_priority" value="3"  class="radio_button" checked>高 -->
-        <!-- </label> -->
-        <!-- <label> -->
-        <!--     <input type="radio" name="help_priority" value="2" class="radio_button">中 -->
-        <!-- </label> -->
-        <!-- <label> -->
-        <!--     <input type="radio" name="help_priority" value="1" class="radio_button">低 -->
-        <!-- </label> -->
         <button id="post_button">ヘルプ</button>
-        <button id="logout_button">x</button>
+        <button id="posting_button" class="display_none">ヘルプ中</button>
+        <!-- <button id="logout_button">×</button> -->
     </form>
     <script type="text/javascript" src="const.js"></script>
     <script type="text/javascript" src="script.js"></script>
