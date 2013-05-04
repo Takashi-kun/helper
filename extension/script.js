@@ -1,20 +1,68 @@
-var element_login_form = document.querySelector('#login_form');
-var element_login_button = document.querySelector('#login_button');
-var element_user_name = document.querySelector('#user_name');
+var element_login_form    = document.querySelector('#login_form');
+var element_login_button  = document.querySelector('#login_button');
+var element_user_name     = document.querySelector('#user_name');
 var element_error_message = document.querySelector('#error_message');
-var element_post_form = document.querySelector('#post_form');
-var element_post_button = document.querySelector('#post_button');
+var element_post_form     = document.querySelector('#post_form');
+var element_post_button   = document.querySelector('#post_button');
+var element_posting_button = document.querySelector('#posting_button');
 var element_logout_button = document.querySelector('#logout_button');
+var element_priority_select = document.querySelector('#post_form select');
 var user_name, priority;
 
-if (checkLogin() === true) {
-    afterLogin();
-} else {
-    beforeLogin();
+element_post_button.addEventListener('click', postPriority, false);
+element_posting_button.addEventListener('click', postSolved, false);
+// element_logout_button.addEventListener('click', userLogout, false);
+element_login_button.addEventListener('click', userLogin, false);
+
+function checkLogin() {
+    console.log('userName:' + localStorage['helperUserName']);
+    if (typeof(localStorage['helperUserName']) !== 'undefined' &&
+               localStorage['helperUserName']  !== null) {
+        return true;
+    }
+    return false;
 }
 
-function error(response) {
-    console.log(response);
+function postSolved(event) {
+    user_name = localStorage['helperUserName'];
+    request(SERVER + '/solved.php', 'POST', {user_name: user_name}, processSolve, processError);
+    return stopSubmit(event);
+}
+
+function postPriority(event) {
+    user_name = localStorage['helperUserName'];
+    priority = element_priority_select.value;
+    request(SERVER + '/help.php', 'POST',
+            {user_name: user_name, help_priority: priority}, processPost, processError);
+    return stopSubmit(event);
+}
+
+function checkHelping() {
+    if (typeof(localStorage['helperHelping']) !== 'undefined' &&
+               localStorage['helperHelping']  !== null) {
+        return true;
+    }
+    return false;
+}
+
+function displayHelp() {
+    if (checkHelping() === false) {
+        return;
+    }
+    addClass(element_post_button, 'display_none');
+    removeClass(element_posting_button, 'display_none');
+    element_priority_select.disabled = true;
+    element_priority_select.value = localStorage['helperHelping'];
+}
+
+function afterLogin() {
+    removeClass(element_post_form, 'display_none');
+    addClass(element_login_form, 'display_none');
+    displayHelp();
+}
+
+function processError(response) {
+    // console.log(response);
 }
 
 function processLogin(response) {
@@ -32,86 +80,42 @@ function processLogin(response) {
     }
 }
 
-function checkLogin() {
-    console.log('userName:' + localStorage['helperUserName']);
-    if (typeof(localStorage['helperUserName']) !== 'undefined' &&
-               localStorage['helperUserName']  !== null) {
-        return true;
-    }
-    return false;
-}
-
-function checkHelping() {
-    console.log('userName:' + localStorage['helperUserName']);
-    if (typeof(localStorage['helperHelping']) !== 'undefined' &&
-               localStorage['helperHelping']  !== null) {
-        return true;
-    }
-    return false;
-}
 
 function processSolve(response) {
     var data = JSON.parse(response);
     if (data['code'] === 1) {
         delete localStorage['helperHelping'];
-        removeClass(element_post_button, 'helping');
-        element_post_button.textContent = 'ヘルプ';
+        removeClass(element_post_button, 'display_none');
+        addClass(element_posting_button, 'display_none');
+        element_priority_select.disabled = false;
     }
-}
-
-function afterLogin() {
-    removeClass(element_post_form, 'display_none');
-    addClass(element_login_form, 'display_none');
-
-    if (checkHelping() === true) {
-        addClass(element_post_button, 'helping');
-        element_post_button.textContent = 'ヘルプ中';
-        priority = localStorage['helperHelping'];
-        document.querySelector('#post_form select').value = priority;
-        element_post_button.addEventListener('click', function(e) {
-            user_name = localStorage['helperUserName'];
-            request(SERVER + '/solved.php', 'POST', {user_name: user_name}, processSolve, error);
-            return stopSubmit(e);
-       }, false);
-    } else {
-        element_post_button.addEventListener('click', function(e) {
-            user_name = localStorage['helperUserName'];
-            priority = document.querySelector('#post_form select').value;
-            request(SERVER + '/help.php', 'POST',
-                    {user_name: user_name, help_priority: priority}, processPost, error);
-            return stopSubmit(e);
-       }, false);
-    }
-
-    element_logout_button.addEventListener('click', function(e) {
-        logout();
-        beforeLogin();
-        return stopSubmit(e);
-   }, false);
 }
 
 function processPost(response) {
     var data = JSON.parse(response);
     if (data['code'] === 1) {
-        addClass(element_post_button, 'helping');
-        element_post_button.textContent = 'ヘルプ中';
         localStorage['helperHelping'] = priority;
+        addClass(element_post_button, 'display_none');
+        removeClass(element_posting_button, 'display_none');
+        element_priority_select.disabled = true;
     }
+}
+
+function userLogin(event) {
+    user_name = element_user_name.value;
+    request(SERVER + '/regist.php', 'POST', {user_name: user_name}, processLogin, processError);
+    return stopSubmit(event);
 }
 
 function beforeLogin() {
     removeClass(element_login_form, 'display_none');
     addClass(element_post_form, 'display_none');
-
-    element_login_button.addEventListener('click', function(e) {
-        user_name = element_user_name.value;
-        request(SERVER + '/regist.php', 'POST', {user_name: user_name}, processLogin, error);
-        return stopSubmit(e);
-    }, false);
 }
 
-function logout() {
+function userLogout(event) {
     delete localStorage['helperUserName'];
+    beforeLogin();
+    return stopSubmit(event);
 }
 
 function addClass(element, className) {
@@ -130,6 +134,7 @@ function request(url, method, data, success, error) {
     var xhr = new XMLHttpRequest();
     xhr.open(method, url);
     xhr.onreadystatechange = function() {
+        console.log(xhr.readyState);
         if (xhr.readyState === 4) {
             console.log(xhr.responseText);
             success(xhr.responseText);
@@ -137,7 +142,7 @@ function request(url, method, data, success, error) {
             error(xhr.responseText);
         }
     }
-    xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     console.log(data);
     xhr.send(encodeParams(data));
 }
@@ -158,3 +163,13 @@ function encodeParams(data) {
     }
     return params.join( '&' );
 }
+
+function main() {
+    if (checkLogin() === true) {
+        afterLogin();
+    } else {
+        beforeLogin();
+    }
+}
+
+main();
