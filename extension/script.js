@@ -5,6 +5,7 @@ var element_error_message = document.querySelector('#error_message');
 var element_post_form = document.querySelector('#post_form');
 var element_post_button = document.querySelector('#post_button');
 var element_logout_button = document.querySelector('#logout_button');
+var user_name, priority;
 
 if (checkLogin() === true) {
     afterLogin();
@@ -12,34 +13,23 @@ if (checkLogin() === true) {
     beforeLogin();
 }
 
-function loginByUserName(user_name) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', SERVER + '/regist.php');
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-            console.log(xhr.responseText);
-            var data = JSON.parse(xhr.responseText);
-            if (data['code'] === 1) {
-                localStorage['helperUserName'] = user_name;
-                if (element_error_message.classList.contains('display_none') === false)  {
-                    element_error_message.classList.add('display_none');
-                }
-                console.log('login success');
-                element_user_name.value = '';
-                afterLogin();
-            } else {
-                delete localStorage['helperUserName'];
-                if (element_error_message.classList.contains('display_none') === true)  {
-                    element_error_message.classList.remove('display_none');
-                }
-                element_error_message.textContent = data['msg'];
-            }
-        }
+function error(response) {
+    console.log(response);
+}
+
+function processLogin(response) {
+    var data = JSON.parse(response);
+    if (data['code'] === 1) {
+        localStorage['helperUserName'] = user_name;
+        addClass(element_error_message, 'display_none');
+        console.log('login success');
+        element_user_name.value = '';
+        afterLogin();
+    } else {
+        delete localStorage['helperUserName'];
+        removeClass(element_error_message, 'display_none');
+        element_error_message.textContent = data['msg'];
     }
-    var data = {user_name: user_name};
-    console.log(data);
-    xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
-    xhr.send(encodeParams(data));
 }
 
 function checkLogin() {
@@ -60,63 +50,63 @@ function checkHelping() {
     return false;
 }
 
-function afterLogin() {
-    if (element_post_form.classList.contains('display_none') === true)  {
-        element_post_form.classList.remove('display_none');
-        element_login_form.classList.add('display_none');
-    }
-    if (checkHelping() === true) {
-        if (element_post_button.classList.contains('helping') === false) {
-            element_post_button.classList.add('helping');
-        }
-        element_post_button.textContent = 'ヘルプ中';
-        var priority = localStorage['helperHelping'];
-        document.querySelector('#post_form select').value = priority;
-    } else {
-        element_post_button.addEventListener('click', function(e) {
-            var user_name = localStorage['helperUserName'];
-            var priority = document.querySelector('#post_form select').value;
-            postByUserNameAndPriority(user_name, priority);
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-       }, false);
+function processSolve(response) {
+    var data = JSON.parse(response);
+    if (data['code'] === 1) {
+        delete localStorage['helperHelping'];
+        removeClass(element_post_button, 'helping');
+        element_post_button.textContent = 'ヘルプ';
     }
 }
 
-function postByUserNameAndPriority(user_name, priority) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', SERVER + '/help.php');
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-            console.log(xhr.responseText);
-            var data = JSON.parse(xhr.responseText);
-            if (data['code'] === 1) {
-                if (element_post_button.classList.contains('helping') === false) {
-                    element_post_button.classList.add('helping');
-                }
-                element_post_button.textContent = 'ヘルプ中';
-                localStorage['helperHelping'] = priority;
-            }
-        }
+function afterLogin() {
+    removeClass(element_post_form, 'display_none');
+    addClass(element_login_form, 'display_none');
+
+    if (checkHelping() === true) {
+        addClass(element_post_button, 'helping');
+        element_post_button.textContent = 'ヘルプ中';
+        priority = localStorage['helperHelping'];
+        document.querySelector('#post_form select').value = priority;
+        element_post_button.addEventListener('click', function(e) {
+            user_name = localStorage['helperUserName'];
+            request(SERVER + '/solved.php', 'POST', {user_name: user_name}, processSolve, error);
+            return stopSubmit(e);
+       }, false);
+    } else {
+        element_post_button.addEventListener('click', function(e) {
+            user_name = localStorage['helperUserName'];
+            priority = document.querySelector('#post_form select').value;
+            request(SERVER + '/help.php', 'POST',
+                    {user_name: user_name, help_priority: priority}, processPost, error);
+            return stopSubmit(e);
+       }, false);
     }
-    var data = {user_name: user_name, help_priority: priority};
-    console.log(data);
-    xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
-    xhr.send(encodeParams(data));
+
+    element_logout_button.addEventListener('click', function(e) {
+        logout();
+        beforeLogin();
+        return stopSubmit(e);
+   }, false);
+}
+
+function processPost(response) {
+    var data = JSON.parse(response);
+    if (data['code'] === 1) {
+        addClass(element_post_button, 'helping');
+        element_post_button.textContent = 'ヘルプ中';
+        localStorage['helperHelping'] = priority;
+    }
 }
 
 function beforeLogin() {
-    if (element_login_form.classList.contains('display_none') === true)  {
-        element_login_form.classList.remove('display_none');
-        element_post_form.classList.add('display_none');
-    }
+    removeClass(element_login_form, 'display_none');
+    addClass(element_post_form, 'display_none');
+
     element_login_button.addEventListener('click', function(e) {
-        var user_name = element_user_name.value;
-        loginByUserName(user_name);
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
+        user_name = element_user_name.value;
+        request(SERVER + '/regist.php', 'POST', {user_name: user_name}, processLogin, error);
+        return stopSubmit(e);
     }, false);
 }
 
@@ -124,13 +114,39 @@ function logout() {
     delete localStorage['helperUserName'];
 }
 
-element_logout_button.addEventListener('click', function(e) {
-    logout();
-    beforeLogin();
+function addClass(element, className) {
+    if (element.classList.contains(className) === false) {
+        element.classList.add(className);
+    }
+}
+
+function removeClass(element, className) {
+    if (element.classList.contains(className) === true) {
+        element.classList.remove(className);
+    }
+}
+
+function request(url, method, data, success, error) {
+    var xhr = new XMLHttpRequest();
+    xhr.open(method, url);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            console.log(xhr.responseText);
+            success(xhr.responseText);
+        } else {
+            error(xhr.responseText);
+        }
+    }
+    xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
+    console.log(data);
+    xhr.send(encodeParams(data));
+}
+
+function stopSubmit(e) {
     e.preventDefault();
     e.stopPropagation();
     return false;
-}, false);
+}
 
 function encodeParams(data) {
     var params = [];
