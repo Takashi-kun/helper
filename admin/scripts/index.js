@@ -29,6 +29,7 @@ var init = function() {
 
     $('#add_question').on('click', function() {
         getAjax(AJAX_URL + '?type=' + getURLHash(location.href), 'POST', {'body': $('#new_question').val(), 'type': getURLHash(location.href)}, makeTable);
+        $('#new_question').val('');
     });
 
     $('.edit_question').on('click', function() {
