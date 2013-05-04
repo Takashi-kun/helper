@@ -29,9 +29,13 @@ class Util extends Constants {
         return $err[$code];
     }
 
-    public static function echoJSON($array) {
+    public static function echoJSON($array, $count) {
         header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($array);
+        $ret = array(
+            'data' => $array,
+            'count' => $count
+        );
+        echo json_encode($ret);
         exit;
     }
 

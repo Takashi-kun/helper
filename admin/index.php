@@ -36,6 +36,12 @@
         </div>
         <table id="main_table" class="table table-bordered table-hover">
         </table>
+        <div id="paging_area">
+            <div class="pagination">
+                <ul>
+                </ul>
+            </div>
+        </div>
     </article>
 <script type="text/javascript" src="scripts/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="scripts/bootstrap.min.js"></script>
