@@ -27,13 +27,13 @@
     </div>
     <div id="help_detail">
         <label>
-            <input type="radio" name="detail" value="all" checked>全て
+            <input type="radio" name="help_detail" value="all" checked>全て
         </label>
         <label>
-            <input type="radio" name="detail" value="solved">解決済み
+            <input type="radio" name="help_detail" value="solved">解決済み
         </label>
         <label>
-            <input type="radio" name="detail" value="no_solved">未解決
+            <input type="radio" name="help_detail" value="no_solved">未解決
         </label>
     </div>
     <table id="main_table" class="table table-bordered table-hover">

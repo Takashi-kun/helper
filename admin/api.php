@@ -5,6 +5,7 @@ require_once(dirname(__FILE__) . '/lib/util.php');
 $type = $_GET['type'];
 $limit = $_GET['limit'];
 $offset = $_GET['offset'];
+$detail = $_GET['detail'];
 $id = null;
 if ($type == null) {
     $type = 'user';
@@ -19,6 +20,8 @@ if (count($_POST) > 0) {
     }
 }
 
-$sql = Util::getSql($type, $id);
+error_log($detail);
+
+$sql = Util::getSql($type, $detail);
 
 Util::echoJSON($db->callMethod($sql, $limit, $offset));

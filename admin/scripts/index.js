@@ -10,6 +10,10 @@ var init = function() {
     $('.links').on('click', function(e){
         firedClick(e.target);
     });
+
+    $('input[name="help_detail"]:radio').change( function() {
+        getAjax(AJAX_URL, 'GET', {'type': getURLHash(location.href), 'detail': $(this).val()}, makeTable);
+    });
 }
 
 var getURLHash = function(href) {
@@ -52,7 +56,7 @@ var showHelpDetail = function() {
 }
 
 var firedClickSolve = function(target) {
-    getAjax(AJAX_URL + '?type=' + getURLHash(location.href), 'POST', {'id': target.name, 'type': getURLHash(location.href)}, makeTable);
+    getAjax(AJAX_URL + '?type=' + getURLHash(location.href) + '&detail=' + $('input[name="help_detail"]:radio').val(), 'POST', {'id': target.name, 'type': getURLHash(location.href)}, makeTable);
 }
 
 var getAjax = function(sendUrl, sendType, sendData, callBackFunc) {
