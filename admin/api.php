@@ -10,12 +10,15 @@ if ($type == null) {
     $type = 'user';
 }
 
-if ($type === 'help' && isset($_POST['id']) && Util::isNumber($_POST['id'])) {
-    $id = $_POST['id'];
+$db = new DbWrap();
+if (count($_POST) > 0) {
+    //UPDATE, DELETE, 系の処理
+    if ($type === 'help' && isset($_POST['id']) && Util::isNumber($_POST['id'])) {
+        $id = $_POST['id'];
+        $db->updateHelpLog($id);
+    }
 }
 
 $sql = Util::getSql($type, $id);
 
-$db = new DbWrap();
 Util::echoJSON($db->callMethod($sql, $limit, $offset));
-

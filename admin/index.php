@@ -25,6 +25,17 @@
             </div>
         </div>
     </div>
+    <div id="help_detail">
+        <label>
+            <input type="radio" name="detail" value="all" checked>全て
+        </label>
+        <label>
+            <input type="radio" name="detail" value="solved">解決済み
+        </label>
+        <label>
+            <input type="radio" name="detail" value="no_solved">未解決
+        </label>
+    </div>
     <table id="main_table" class="table table-bordered table-hover">
     </table>
 <script type="text/javascript" src="scripts/jquery-1.7.2.min.js"></script>

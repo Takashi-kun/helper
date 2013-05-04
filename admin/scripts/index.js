@@ -24,19 +24,35 @@ var getURLHash = function(href) {
 }
 
 var firedClick = function(target) {
-    getAjax(AJAX_URL, 'GET', {'type': getURLHash(target.href)}, makeTable);
+    var type = getURLHash(location.href);
+    changeHelpDetailView(type);
+    getAjax(AJAX_URL, 'GET', {'type': type}, makeTable);
 }
 
 var firedLoad = function() {
-    getAjax(AJAX_URL, 'GET', {'type': getURLHash(location.href)}, makeTable);
+    var type = getURLHash(location.href);
+    changeHelpDetailView(type);
+    getAjax(AJAX_URL, 'GET', {'type': type}, makeTable);
+}
+
+var changeHelpDetailView = function(type) {
+    if (type === 'help') {
+        showHelpDetail();
+    } else {
+        hideHelpDetail();
+    }
+}
+
+var hideHelpDetail = function() {
+    $('#help_detail').hide();
+}
+
+var showHelpDetail = function() {
+    $('#help_detail').show();
 }
 
 var firedClickSolve = function(target) {
-    getAjax(AJAX_URL + '?type=' + getURLHash(location.href), 'POST', {'id': target.name}, missingButton);
-}
-
-var missingButton = function(data, sendData) {
-    console.log('HERE');
+    getAjax(AJAX_URL + '?type=' + getURLHash(location.href), 'POST', {'id': target.name, 'type': getURLHash(location.href)}, makeTable);
 }
 
 var getAjax = function(sendUrl, sendType, sendData, callBackFunc) {
@@ -48,6 +64,7 @@ var getAjax = function(sendUrl, sendType, sendData, callBackFunc) {
         data: sendData,
         success: function(data) {
             callBackFunc(data, sendData);
+            return true;
         },
         error: function(msg) {
             return errorAjax(msg);
