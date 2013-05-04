@@ -71,7 +71,7 @@ var firedLoad = function(flg) {
         detail = $('.help_detail.active').val();
     }
     getAjax(AJAX_URL, 'GET', {'type': type, 'detail': detail, 'offset': offset}, makeTable);
-
+/*
     if (getURLHash(location.href) === 'help') {
         console.log('FIRED');
         setTimeout(function() {
@@ -82,6 +82,7 @@ var firedLoad = function(flg) {
     } else {
         clearInterval(timerId);
     }
+*/
 };
 
 var changeHelpDetailView = function(type) {
