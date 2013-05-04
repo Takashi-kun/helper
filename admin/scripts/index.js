@@ -1,5 +1,6 @@
 var offset = 0;
-var timerId;
+var timerId = 0;
+var isAutoLoad = true;
 
 $(function() {
     init();
@@ -21,7 +22,35 @@ var init = function() {
     $('.help_detail').on('click', function() {
         getAjax(AJAX_URL, 'GET', {'type': getURLHash(location.href), 'detail': $(this).val(), 'offset': offset}, makeTable);
     });
+
+    $('.auto_load').on('click', function() {
+        firedClickAutoLoad($(this));
+    });
+
+    $('#add_question').on('click', function() {
+        getAjax(AJAX_URL + '?type=' + getURLHash(location.href), 'POST', {'body': $('#new_question').val(), 'type': getURLHash(location.href)}, makeTable);
+    });
+
+    $('.edit_question').on('click', function() {
+        var body = $('#edit_question_textarea').val();
+        var id = $('.edit_question_id').text();
+        getAjax(AJAX_URL + '?type=' + getURLHash(location.href), 'POST', {'id': id, 'body': body, 'type': getURLHash(location.href)}, makeTable);
+        console.log(body + id);
+    });
 };
+
+var firedClickAutoLoad = function(target) {
+    if (target.val() === 'yes') {
+        isAutoLoad = true;
+        firedLoad(true);
+    } else {
+        isAutoLoad = false;
+        if (timerId !== 0) {
+            clearInterval(timerId);
+        }
+        timerId = 0;
+    }
+}
 
 var showLoading = function() {
     $('#now_loading').css({'width': $(window).width(), 'height': $(window).height()});
@@ -71,18 +100,29 @@ var firedLoad = function(flg) {
         detail = $('.help_detail.active').val();
     }
     getAjax(AJAX_URL, 'GET', {'type': type, 'detail': detail, 'offset': offset}, makeTable);
-/*
+
+    if (isAutoLoad !== true) {
+        if (timerId !== 0) {
+            clearInterval(timerId);
+        }
+        timerId = 0;
+        return;
+    }
+
     if (getURLHash(location.href) === 'help') {
         console.log('FIRED');
-        setTimeout(function() {
+        if (timerId === 0) {
             timerId = setInterval(function() {
                 firedLoad(true);
-            }, 10000);
-        }, 10000);
+            }, AUTO_LOAD_INTERVAL);
+        }
     } else {
-        clearInterval(timerId);
+        if (timerId !== 0) {
+            clearInterval(timerId);
+        }
+        timerId = 0;
     }
-*/
+
 };
 
 var changeHelpDetailView = function(type) {
@@ -90,6 +130,12 @@ var changeHelpDetailView = function(type) {
         showHelpDetail();
     } else {
         hideHelpDetail();
+    }
+
+    if (type === 'question') {
+        showQuestionDetail();
+    } else {
+        hideQuestionDetail();
     }
 };
 
@@ -99,6 +145,14 @@ var hideHelpDetail = function() {
 
 var showHelpDetail = function() {
     $('#help_detail').show();
+};
+
+var hideQuestionDetail = function() {
+    $('#question_detail').hide();
+};
+
+var showQuestionDetail = function() {
+    $('#question_detail').show();
 };
 
 var firedClickSolve = function(target) {
@@ -164,8 +218,10 @@ var makeTable = function(data, sendData) {
         var tr = $('<tr/>');
         var isSoloved = false;
         for (var key in obj) {
-            if (key === 'is_solved' && obj[key] === '1') {
-                isSoloved = true;
+            if (key === 'is_solved') {
+                if (obj[key] === '1') {
+                    isSoloved = true;
+                }
                 continue;
             }
             var td = $('<td/>');
@@ -179,6 +235,27 @@ var makeTable = function(data, sendData) {
             button.attr({'class': 'solved_button btn', 'name': obj['id']});
             button.text('解決');
             button.appendTo(td);
+        } else if (sendData['type'] === 'question') {
+            var a = $('<a/>');
+            a.attr(
+                {
+                    'class': 'edit_question_button btn btn-inverse',
+                    'name': obj['id'],
+                    'href': '#edit_question_modal',
+                    'role': 'button',
+                    'data-toggle': 'modal',
+                    'inner-data': obj['body']
+                }
+            );
+            a.text('編集');
+            a.appendTo(td);
+            td.appendTo(tr);
+
+            var td = $('<td/>');
+            var button = $('<button/>');
+            button.attr({'class': 'delete_question_button btn btn-danger', 'name': obj['id']});
+            button.text('削除');
+            button.appendTo(td);
         }
         td.appendTo(tr);
         tr.appendTo(tbody);
@@ -188,6 +265,18 @@ var makeTable = function(data, sendData) {
 
     $('.solved_button').on('click', function(e){
         firedClickSolve(e.target);
+    });
+
+    $('.delete_question_button').on('click', function() {
+        if(window.confirm('本当に削除しますか?')){
+            getAjax(AJAX_URL + '?type=' + getURLHash(location.href), 'POST', {'id': $(this).attr('name'), 'type': getURLHash(location.href)}, makeTable);
+        }
+    });
+
+    $('.edit_question_button').on('click', function() {
+        var body = $(this).attr('inner-data');
+        $('.edit_question_id').text($(this).attr('name'));
+        $('#edit_question_textarea').val(body);
     });
 };
 

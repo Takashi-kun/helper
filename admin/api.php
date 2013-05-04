@@ -20,11 +20,28 @@ if (isset($_GET['detail']) === true) {
 }
 
 $db = new DbWrap();
+
 if (count($_POST) > 0) {
-    //UPDATE, DELETE, 系の処理
-    if ($type === 'help' && isset($_POST['id']) && Util::isNumber($_POST['id'])) {
+    //UPDATE, DELETE, INSERT系の処理
+    if ($type === 'help' && isset($_POST['id']) && Util::isNumber($_POST['id']) === true) {
         $id = $_POST['id'];
         $db->updateHelpLog($id);
+    } else if ($type === 'question') {
+        if (isset($_POST['body']) === true && isset($_POST['id']) === true && Util::isNumber($_POST['id']) === true) {
+            $body = htmlspecialchars($_POST['body']);
+            if (mb_strlen($body) > 0) {
+                $db->updatePriorityMst($body, intval($_POST['id']));
+            }
+        } else {
+            if (isset($_POST['body']) === true) {
+                $body = htmlspecialchars($_POST['body']);
+                if (mb_strlen($body) > 0) {
+                    $db->insertPriorityMst($body);
+                }
+            } else if (isset($_POST['id']) === true && Util::isNumber($_POST['id']) === true) {
+                $db->deletePriorityMst(intval($_POST['id']));
+            }
+        }
     }
 }
 

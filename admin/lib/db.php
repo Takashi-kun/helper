@@ -31,12 +31,80 @@ class DbWrap {
         $sql .= ' is_solved = 1 ';
         $sql .= ' WHERE id = :id';
 
-        $this->stmt = $this->pdo->prepare($sql);
-        $this->stmt->execute(
+        try {
+            $this->pdo->beginTransaction();
+            $this->stmt = $this->pdo->prepare($sql);
+            $this->stmt->execute(
                 array(
                     'id' => intval($id)
                 )
             );
+            $this->pdo->commit();
+        } catch (PDOException $e) {
+            $this->pdo->rollback();
+            error_log($e->getMessage() . ' ' . strtotime('now'));
+            return false;
+        }
+    }
+
+    public function insertPriorityMst($body) {
+        $sql = 'INSERT INTO priority_mst(body) VALUES (:body)';
+        try {
+            $this->pdo->beginTransaction();
+            $this->stmt = $this->pdo->prepare($sql);
+            $this->stmt->execute(
+                array(
+                    'body' => $body
+                )
+            );
+            $this->pdo->commit();
+            return true;
+        } catch (PDOException $e) {
+            $this->pdo->rollback();
+            error_log($e->getMessage() . ' ' . strtotime('now'));
+            return false;
+        }
+    }
+
+    public function deletePriorityMst($id) {
+        $sql = 'DELETE FROM priority_mst WHERE id = :id';
+        try {
+            $this->pdo->beginTransaction();
+            $this->stmt = $this->pdo->prepare($sql);
+            $this->stmt->execute(
+                array(
+                    'id' => $id
+                )
+            );
+            $this->pdo->commit();
+            return true;
+        } catch (PDOException $e) {
+            $this->pdo->rollback();
+            error_log($e->getMessage() . ' ' . strtotime('now'));
+            return false;
+        }
+    }
+
+    public function updatePriorityMst($body, $id) {
+        $sql = 'UPDATE priority_mst SET ';
+        $sql .= 'body = :body ';
+        $sql .= 'WHERE id = :id';
+        try {
+            $this->pdo->beginTransaction();
+            $this->stmt = $this->pdo->prepare($sql);
+            $this->stmt->execute(
+                array(
+                    'body' => $body,
+                    'id' => $id
+                )
+            );
+            $this->pdo->commit();
+            return true;
+        } catch (PDOException $e) {
+            $this->pdo->rollback();
+            error_log($e->getMessage() . ' ' . strtotime('now'));
+            return false;
+        }
     }
 
     public function getTableCount($type, $detail) {
