@@ -46,20 +46,6 @@ class DbWrap {
             );
     }
 
-    // private function getHelpLog($limit, $offset) {
-    //     $this->stmt = $this->pdo->prepare('SELECT * FROM help_log LIMIT ' . $limit . ' OFFSET ' . $offset);
-    //     $this->stmt->execute();
-    //     $result = $this->stmt->fetchAll(PDO::FETCH_ASSOC);
-    //     return $result;
-    // }
-
-    // private function getQuestionLog($limit, $offset) {
-    //     $this->stmt = $this->pdo->prepare('SELECT * FROM question_log LIMIT ' . $limit . ' OFFSET ' . $offset);
-    //     $this->stmt->execute();
-    //     $result = $this->stmt->fetchAll(PDO::FETCH_ASSOC);
-    //     return $result;
-    // }
-
     public function __destruct() {
         $this->pdo = null;
         $this->stmt = null;

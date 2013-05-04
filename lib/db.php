@@ -76,6 +76,27 @@ class DbWrap {
         }
     }
 
+    public function updateHelperLog($user_name) {
+        $sql = 'update help_log t1 inner join user_profile t2 ';
+        $sql .= 'on t1.user_profile_id = t2.id set is_solved = 1 ';
+        $sql .= 'where t2.user_name = :user_name';
+        try {
+            $this->pdo->beginTransaction();
+            $this->stmt = $this->pdo->prepare($sql);
+            $this->stmt->execute(
+                array(
+                    'user_name' => $user_name
+                )
+            );
+            $this->pdo->commit();
+            return true;
+        } catch (PDOException $e) {
+            $this->pdo->rollback();
+            error_log($e->getMessage() . ' ' . strtotime('now'));
+            return false;
+        }
+    }
+
     public function __destruct() {
         $this->pdo = null;
         $this->stmt = null;

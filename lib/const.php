@@ -8,6 +8,7 @@ class Constants {
         -2 => 'Missed save help',
         -3 => 'No question inserted',
         -4 => 'Missed add question',
-        -5 => 'Already added help'
+        -5 => 'Already added help',
+        -6 => 'Missed your request'
     );
 }
