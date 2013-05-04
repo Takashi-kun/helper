@@ -71,7 +71,7 @@ var firedLoad = function(flg) {
         detail = $('.help_detail.active').val();
     }
     getAjax(AJAX_URL, 'GET', {'type': type, 'detail': detail, 'offset': offset}, makeTable);
-
+/*
     if (getURLHash(location.href) === 'help') {
         console.log('FIRED');
         setTimeout(function() {
@@ -82,6 +82,7 @@ var firedLoad = function(flg) {
     } else {
         clearInterval(timerId);
     }
+*/
 };
 
 var changeHelpDetailView = function(type) {
@@ -163,13 +164,14 @@ var makeTable = function(data, sendData) {
         var tr = $('<tr/>');
         var isSoloved = false;
         for (var key in obj) {
+            if (key === 'is_solved' && obj[key] === '1') {
+                isSoloved = true;
+                continue;
+            }
             var td = $('<td/>');
             td.text(obj[key]);
             td.appendTo(tr);
-            if (key === 'is_solved' && obj[key] === '1') {
-                isSoloved = true;
-            }
-        }
+       }
 
         var td = $('<td/>');
         if (sendData['type'] === 'help' && isSoloved === false) {
