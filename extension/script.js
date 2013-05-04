@@ -24,13 +24,11 @@ function checkLogin() {
 }
 
 function postSolved(event) {
-    user_name = localStorage['helperUserName'];
     request(SERVER + '/solved.php', 'POST', {user_name: user_name}, processSolve, processError);
     return stopSubmit(event);
 }
 
 function postPriority(event) {
-    user_name = localStorage['helperUserName'];
     priority = element_priority_select.value;
     request(SERVER + '/help.php', 'POST',
             {user_name: user_name, help_priority: priority}, processPost, processError);
@@ -49,6 +47,17 @@ function displayHelp() {
     if (checkHelping() === false) {
         return;
     }
+    displayPostingHelp();
+}
+
+function displayNotPostingHelp() {
+    delete localStorage['helperHelping'];
+    removeClass(element_post_button, 'display_none');
+    addClass(element_posting_button, 'display_none');
+    element_priority_select.disabled = false;
+}
+
+function displayPostingHelp() {
     addClass(element_post_button, 'display_none');
     removeClass(element_posting_button, 'display_none');
     element_priority_select.disabled = true;
@@ -59,15 +68,10 @@ function processConfirm(response) {
     var data = JSON.parse(response);
     // まだHelpしていない時
     if (data['code'] === 1) {
-        delete localStorage['helperHelping'];
-        removeClass(element_post_button, 'display_none');
-        addClass(element_posting_button, 'display_none');
-        element_priority_select.disabled = false;
-    } else {
-        localStorage['helperHelping'] = priority;
-        addClass(element_post_button, 'display_none');
-        removeClass(element_posting_button, 'display_none');
-        element_priority_select.disabled = true;
+        displayNotPostingHelp();
+    } else if (data['code'] === -5) {
+        localStorage['helperHelping'] = data['msg'];
+        displayPostingHelp();
     }
 }
 
@@ -79,6 +83,7 @@ function confirmStatus() {
 function afterLogin() {
     removeClass(element_post_form, 'display_none');
     addClass(element_login_form, 'display_none');
+    user_name = localStorage['helperUserName'];
     displayHelp();
     confirmStatus();
 }
@@ -106,10 +111,7 @@ function processLogin(response) {
 function processSolve(response) {
     var data = JSON.parse(response);
     if (data['code'] === 1) {
-        delete localStorage['helperHelping'];
-        removeClass(element_post_button, 'display_none');
-        addClass(element_posting_button, 'display_none');
-        element_priority_select.disabled = false;
+        displayNotPostingHelp();
     }
 }
 
@@ -117,9 +119,7 @@ function processPost(response) {
     var data = JSON.parse(response);
     if (data['code'] === 1) {
         localStorage['helperHelping'] = priority;
-        addClass(element_post_button, 'display_none');
-        removeClass(element_posting_button, 'display_none');
-        element_priority_select.disabled = true;
+        displayPostingHelp();
     }
 }
 
@@ -194,4 +194,5 @@ function main() {
     }
 }
 
+// userLogout();
 main();
