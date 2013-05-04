@@ -33,6 +33,19 @@ class DbWrap {
         return $result;
     }
 
+    public function updateHelpLog($id) {
+        $sql = ' UPDATE help_log SET ';
+        $sql .= ' is_solved = 1 ';
+        $sql .= ' WHERE id = :id';
+
+        $this->stmt = $this->pdo->prepare($sql);
+        $this->stmt->execute(
+                array(
+                    'id' => intval($id)
+                )
+            );
+    }
+
     // private function getHelpLog($limit, $offset) {
     //     $this->stmt = $this->pdo->prepare('SELECT * FROM help_log LIMIT ' . $limit . ' OFFSET ' . $offset);
     //     $this->stmt->execute();

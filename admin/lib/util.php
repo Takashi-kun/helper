@@ -42,15 +42,15 @@ class Util extends Constants {
         return true;
     }
 
-    public static function getSql($type) {
+    public static function getSql($type, $id) {
         if ($type === 'user') {
-            $sql .= 'SELECT * FROM user_profile ';
+            $sql = 'SELECT * FROM user_profile ';
         } else if ($type === 'help') {
-            $sql .= 'SELECT t1.id, t2.user_name, t1.is_solved, t1.priority, t1.created_at ';
+            $sql = 'SELECT t1.id, t2.user_name, t1.is_solved, t1.priority, t1.created_at ';
             $sql .= ' FROM help_log t1 LEFT JOIN user_profile t2 ON t1.user_profile_id = t2.id ';
             $sql .= ' ORDER BY t1.priority ';
         } else if ($type === 'question') {
-            $sql .= 'SELECT t1.id, t2.user_name, t1.body, t1.priority, t1.created_at ';
+            $sql = 'SELECT t1.id, t2.user_name, t1.body, t1.priority, t1.created_at ';
             $sql .= ' FROM question_log t1 LEFT JOIN user_profile t2 ON t1.user_profile_id = t2.id ';
             $sql .= ' ORDER BY t1.priority, t1.created_at DESC ';
         }
