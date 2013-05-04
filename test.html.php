@@ -37,6 +37,13 @@
             <input type="submit" name="question">
         </form>
     </p>
+    <p>
+        更新
+        <form action="http://dev.helper/solved.php" method="post">
+            <input type="text" name="user_name" placeholder="あなたの名前">
+            <input type="submit" name="question">
+        </form>
+    </p>
 
 <script type="text/javascript" src="http://localhost/jquery/jquery-1.7.2.min.js"></script>
 <script>
