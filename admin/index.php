@@ -2,18 +2,18 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>管理ツール</title>
+    <title>CY Helper 管理ツール</title>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/index.css">
 </head>
 <body>
     <article class="container">
-        <h1>お助けマシン</h1>
+        <h1>CY Helper</h1>
         <div id="now_loading">
         </div>
         <nav class="navbar navbar-googlenav">
             <div class="navbar-inner">
-                <a class="brand" href="#">Title</a>
+                <span class="brand">Menu</span>
                 <ul class="nav">
                     <li class="top_links">
                         <a href="#user" class="links">ユーザー一覧</a>

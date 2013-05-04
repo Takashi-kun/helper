@@ -7,7 +7,7 @@ class DbWrap {
 
     public function __construct() {
         try {
-            $this->pdo = new PDO('mysql:dbname=HELPERDB;host=localhost;', 'helper', 'helperpass');
+            $this->pdo = new PDO(Constants::DB_HOST, Constants::DB_USER, Constants::DB_PASS);
             $this->stmt = $this->pdo->query('SET NAMES utf8;');
         } catch (PDOException $e) {
             error_log($e->getMessage() . ' ' . strtotime('now'));
