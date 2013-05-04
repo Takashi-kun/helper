@@ -15,13 +15,6 @@ class DbWrap {
     }
 
     public function callMethod($sql_base, $limit, $offset) {
-        if (Util::isNumber($limit) !== true) {
-            $limit = 20;
-        }
-        if (Util::isNumber($offset) !== true) {
-            $offset = 0;
-        }
-
         $sql_base .= ' LIMIT ' . $limit . ' OFFSET ' . $offset;
         return $this->getDBData($sql_base);
     }
@@ -44,6 +37,26 @@ class DbWrap {
                     'id' => intval($id)
                 )
             );
+    }
+
+    public function getTableCount($type, $detail) {
+        $sql = 'SELECT count(id) AS cnt ';
+        if ($type === 'user') {
+            $sql .= ' FROM user_profile';
+        } else if ($type === 'help') {
+            $sql .= ' FROM help_log t1';
+            if ($detail === 'solved') {
+                $sql .= ' WHERE t1.is_solved = 1 ';
+            } else if ($detail === 'no_solved') {
+                $sql .= ' WHERE t1.is_solved = 0 ';
+            }
+        } else if ($type === 'question') {
+            $sql .= ' FROM question_log ';
+        }
+        $this->stmt = $this->pdo->prepare($sql);
+        $this->stmt->execute();
+        $result = $this->stmt->fetch(PDO::FETCH_ASSOC);
+        return intval($result['cnt']);
     }
 
     public function __destruct() {

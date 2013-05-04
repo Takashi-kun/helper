@@ -3,8 +3,8 @@
 require_once(dirname(__FILE__) . '/lib/util.php');
 
 $type   = $_GET['type'];
-$limit  = null;
-$offset = null;
+$limit  = 20;
+$offset = 0;
 $detail = null;
 
 if ($type == null) {
@@ -34,4 +34,10 @@ if (count($_POST) > 0) {
 
 $sql = Util::getSql($type, $detail);
 
-Util::echoJSON($db->callMethod($sql, $limit, $offset));
+$count = $db->getTableCount($type, $detail);
+
+Util::echoJSON($db->callMethod($sql, $limit, $offset), $count);
+
+
+
+

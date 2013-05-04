@@ -1,22 +1,24 @@
+var offset = 0;
+
 $(function() {
     init();
 });
 
 var init = function() {
-    $(window).on('load', firedLoad);
-
-    $(window).on('hashchange', firedLoad);
-
-    $('.links').on('click', function(e){
-        firedClick(e.target);
+    $(window).on('load', function() {
+        firedLoad(true);
     });
 
-    // $('input[name="help_detail"]:radio').change( function() {
-    //     getAjax(AJAX_URL, 'GET', {'type': getURLHash(location.href), 'detail': $(this).val()}, makeTable);
-    // });
+    $(window).on('hashchange', function() {
+        firedLoad(true);
+    });
+
+    $('.links').on('click', function(e){
+        firedClickNavLink(e.target);
+    });
 
     $('.help_detail').on('click', function() {
-        getAjax(AJAX_URL, 'GET', {'type': getURLHash(location.href), 'detail': $(this).val()}, makeTable);
+        getAjax(AJAX_URL, 'GET', {'type': getURLHash(location.href), 'detail': $(this).val(), 'offset': offset}, makeTable);
     });
 };
 
@@ -40,17 +42,20 @@ var getURLHash = function(href) {
     return hrefArr[1];
 };
 
-var firedClick = function(target) {
+var firedClickNavLink = function(target) {
     var detail;
     var type = getURLHash(location.href);
     changeHelpDetailView(type);
     if (type === 'help') {
         detail = $('.help_detail.active').val();
     }
-    getAjax(AJAX_URL, 'GET', {'type': type, 'detail': detail}, makeTable);
+    getAjax(AJAX_URL, 'GET', {'type': type, 'detail': detail, 'offset': offset}, makeTable);
 };
 
-var firedLoad = function() {
+var firedLoad = function(flg) {
+    if (flg === true) {
+        offset = 0;
+    }
     var detail;
     var type = getURLHash(location.href);
     $('.top_links').removeClass('active');
@@ -64,7 +69,7 @@ var firedLoad = function() {
     if (type === 'help') {
         detail = $('.help_detail.active').val();
     }
-    getAjax(AJAX_URL, 'GET', {'type': type, 'detail': detail}, makeTable);
+    getAjax(AJAX_URL, 'GET', {'type': type, 'detail': detail, 'offset': offset}, makeTable);
 };
 
 var changeHelpDetailView = function(type) {
@@ -97,7 +102,8 @@ var getAjax = function(sendUrl, sendType, sendData, callBackFunc) {
         data: sendData,
         success: function(data) {
             hideLoading();
-            callBackFunc(data, sendData);
+            callBackFunc(data['data'], sendData);
+            makePaging(Number(data['count']));
             return true;
         },
         error: function(msg) {
@@ -106,10 +112,30 @@ var getAjax = function(sendUrl, sendType, sendData, callBackFunc) {
     });
 };
 
+var makePaging = function(count) {
+    $('.pagination ul').text('');
+    var pagingNum = Math.floor(count/LIMIT_NUM) + 1;
+    for (var i = 1; i <= pagingNum; i++) {
+        var li = $('<li/>');
+        var a = $('<a/>');
+        a.text(i);
+        a.appendTo(li);
+        li.appendTo($('.pagination ul'));
+        li.on('click', function() {
+            firedClickPaging($(this));
+        });
+    }
+};
+
+var firedClickPaging = function(target) {
+    offset = (Number(target.children().text()) - 1) * LIMIT_NUM;
+    firedLoad(false);
+}
+
 var errorAjax = function(msg) {
     alert('申し訳ございません。サーバでエラーが発生しています。');
     console.log(msg);
-    // ingicater_end();
+    hideLoading();
     return false;
 };
 
