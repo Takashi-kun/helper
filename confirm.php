@@ -19,11 +19,11 @@ if (isset($user['id']) !== true) {
     Util::echoJSON($ret);
 }
 
-$flg = $db->checkDupplicateHelpLog($user['id']);
+$flg = $db->confirmDupplicateHelpLog($user['id']);
 
 if ($flg !== false) {
     $ret['code'] = -5;
-    $ret['msg'] = Util::getErrorMsg($ret['code']);
+    $ret['msg'] = (int) $flg;
     Util::echoJSON($ret);
 }
 

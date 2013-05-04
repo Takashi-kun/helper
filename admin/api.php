@@ -3,7 +3,6 @@
 require_once(dirname(__FILE__) . '/lib/util.php');
 
 $type   = $_GET['type'];
-$limit  = 20;
 $offset = 0;
 $detail = null;
 
@@ -11,9 +10,6 @@ if ($type == null) {
     $type = 'user';
 }
 
-if (isset($_GET['limit']) === true) {
-    $limit = intval($_GET['limit']);
-}
 
 if (isset($_GET['offset']) === true) {
     $offset = intval($_GET['offset']);
@@ -36,7 +32,7 @@ $sql = Util::getSql($type, $detail);
 
 $count = $db->getTableCount($type, $detail);
 
-Util::echoJSON($db->callMethod($sql, $limit, $offset), $count);
+Util::echoJSON($db->callMethod($sql, $offset), $count);
 
 
 
