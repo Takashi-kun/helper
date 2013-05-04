@@ -19,5 +19,8 @@ if (isset($user['id']) === true) {
     $ret['msg'] = Util::getErrorMsg($ret['code']);
 }
 
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: text/plain; charset=UTF-8');
+
 Util::echoJSON($ret);
 
