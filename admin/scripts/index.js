@@ -11,10 +11,23 @@ var init = function() {
         firedClick(e.target);
     });
 
-    $('input[name="help_detail"]:radio').change( function() {
+    // $('input[name="help_detail"]:radio').change( function() {
+    //     getAjax(AJAX_URL, 'GET', {'type': getURLHash(location.href), 'detail': $(this).val()}, makeTable);
+    // });
+
+    $('.help_detail').on('click', function() {
         getAjax(AJAX_URL, 'GET', {'type': getURLHash(location.href), 'detail': $(this).val()}, makeTable);
     });
-}
+};
+
+var showLoading = function() {
+    $('#now_loading').css({'width': $(window).width(), 'height': $(window).height()});
+    $('#now_loading').show();
+};
+
+var hideLoading = function() {
+    $('#now_loading').hide();
+};
 
 var getURLHash = function(href) {
     var hrefStr = new String(href);
@@ -25,19 +38,34 @@ var getURLHash = function(href) {
     }
 
     return hrefArr[1];
-}
+};
 
 var firedClick = function(target) {
+    var detail;
     var type = getURLHash(location.href);
     changeHelpDetailView(type);
-    getAjax(AJAX_URL, 'GET', {'type': type}, makeTable);
-}
+    if (type === 'help') {
+        detail = $('.help_detail.active').val();
+    }
+    getAjax(AJAX_URL, 'GET', {'type': type, 'detail': detail}, makeTable);
+};
 
 var firedLoad = function() {
+    var detail;
     var type = getURLHash(location.href);
+    $('.top_links').removeClass('active');
+    $('.top_links').each(function() {
+        if ($(this).children().attr('href') === '#' + type) {
+            $(this).addClass('active');
+        }
+    });
+
     changeHelpDetailView(type);
-    getAjax(AJAX_URL, 'GET', {'type': type}, makeTable);
-}
+    if (type === 'help') {
+        detail = $('.help_detail.active').val();
+    }
+    getAjax(AJAX_URL, 'GET', {'type': type, 'detail': detail}, makeTable);
+};
 
 var changeHelpDetailView = function(type) {
     if (type === 'help') {
@@ -45,28 +73,30 @@ var changeHelpDetailView = function(type) {
     } else {
         hideHelpDetail();
     }
-}
+};
 
 var hideHelpDetail = function() {
     $('#help_detail').hide();
-}
+};
 
 var showHelpDetail = function() {
     $('#help_detail').show();
-}
+};
 
 var firedClickSolve = function(target) {
-    getAjax(AJAX_URL + '?type=' + getURLHash(location.href) + '&detail=' + $('input[name="help_detail"]:radio').val(), 'POST', {'id': target.name, 'type': getURLHash(location.href)}, makeTable);
-}
+    getAjax(AJAX_URL + '?type=' + getURLHash(location.href) + '&detail=' + $('input[name="help_detail"]:checked').val(), 'POST', {'id': target.name, 'type': getURLHash(location.href)}, makeTable);
+};
 
 var getAjax = function(sendUrl, sendType, sendData, callBackFunc) {
     // ingicater_start();
+    showLoading();
     $.ajax({
         dataType: 'json',
         url: sendUrl,
         type: sendType,
         data: sendData,
         success: function(data) {
+            hideLoading();
             callBackFunc(data, sendData);
             return true;
         },
@@ -74,14 +104,14 @@ var getAjax = function(sendUrl, sendType, sendData, callBackFunc) {
             return errorAjax(msg);
         }
     });
-}
+};
 
 var errorAjax = function(msg) {
     alert('申し訳ございません。サーバでエラーが発生しています。');
     console.log(msg);
     // ingicater_end();
     return false;
-}
+};
 
 var makeTable = function(data, sendData) {
     $('#main_table').text('');
@@ -99,14 +129,15 @@ var makeTable = function(data, sendData) {
                 isSoloved = true;
             }
         }
+
+        var td = $('<td/>');
         if (sendData['type'] === 'help' && isSoloved === false) {
-            var td = $('<td/>');
             var button = $('<button/>');
-            button.attr({'class': 'solved_button', 'name': obj['id']});
+            button.attr({'class': 'solved_button btn', 'name': obj['id']});
             button.text('解決');
             button.appendTo(td);
-            td.appendTo(tr);
         }
+        td.appendTo(tr);
         tr.appendTo(tbody);
     }
     thead.appendTo('#main_table');
@@ -115,7 +146,7 @@ var makeTable = function(data, sendData) {
     $('.solved_button').on('click', function(e){
         firedClickSolve(e.target);
     });
-}
+};
 
 var makeThead = function(type) {
     var thead = $('<thead/>');
@@ -126,4 +157,4 @@ var makeThead = function(type) {
         th.appendTo(tr);
     }
     return tr;
-}
+};

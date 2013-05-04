@@ -2,13 +2,25 @@
 
 require_once(dirname(__FILE__) . '/lib/util.php');
 
-$type = $_GET['type'];
-$limit = $_GET['limit'];
-$offset = $_GET['offset'];
-$detail = $_GET['detail'];
-$id = null;
+$type   = $_GET['type'];
+$limit  = null;
+$offset = null;
+$detail = null;
+
 if ($type == null) {
     $type = 'user';
+}
+
+if (isset($_GET['limit']) === true) {
+    $limit = intval($_GET['limit']);
+}
+
+if (isset($_GET['offset']) === true) {
+    $offset = intval($_GET['offset']);
+}
+
+if (isset($_GET['detail']) === true) {
+    $detail = $_GET['detail'];
 }
 
 $db = new DbWrap();
@@ -19,8 +31,6 @@ if (count($_POST) > 0) {
         $db->updateHelpLog($id);
     }
 }
-
-error_log($detail);
 
 $sql = Util::getSql($type, $detail);
 
