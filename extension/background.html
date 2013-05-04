@@ -1,0 +1,8 @@
+<script>
+var title;
+chrome.extension.onRequest.addListener(
+    function(req, sender, res) {
+        title = req.title;
+    }
+);
+</script>
