@@ -31,6 +31,23 @@ class DbWrap {
         return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getWaitCount($user_id) {
+        $sql = 'SELECT (SELECT id FROM help_log WHERE is_solved = 0 GROUP BY is_solved) AS now, ';
+        $sql .= ' (SELECT id FROM help_log WHERE is_solved = 0 AND user_profile_id = :user_id GROUP BY is_solved) AS user ';
+        $sql .= ' FROM help_log WHERE is_solved = 0 GROUP BY is_solved';
+
+        $this->stmt = $this->pdo->prepare($sql);
+        $this->stmt->execute(
+            array(
+                'user_id' => $user_id
+            )
+        );
+
+        $result = $this->stmt->fetch(PDO::FETCH_ASSOC);
+        $this->stmt->closeCursor();
+        return $result;
+    }
+
     private function checkDupplicateHelpLog($user_id) {
         $this->stmt = $this->pdo->prepare('SELECT COUNT(id) AS cnt FROM help_log WHERE user_profile_id = :user_id AND is_solved = 0');
         $this->stmt->execute(
