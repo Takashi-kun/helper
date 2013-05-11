@@ -44,7 +44,10 @@ function postSolved(event) {
 // }
 
 function postQuestion(event) {
-    question = element_question_textarea.value;
+    question = element_question_textarea.value.trim();
+    if (question === '') {
+        return;
+    }
     request(SERVER + '/help.php', 'POST',
             {user_name: user_name, question: question}, processPost, processError);
     return stopSubmit(event);
@@ -72,16 +75,12 @@ function displayNotPostingHelp() {
     addClass(element_your_turn, 'display_none');
     removeClass(element_post_button, 'display_none');
     addClass(element_posting_button, 'display_none');
+    element_question_textarea.value = '';
+    element_question_textarea.disabled = false;
     // element_priority_select.disabled = false;
 }
 
-function displayPostingHelp() {
-    addClass(element_post_button, 'display_none');
-    removeClass(element_posting_button, 'display_none');
-    element_question_textarea.disabled = true;
-    element_question_textarea.value = localStorage['helperHelping'];
-    // element_priority_select.disabled = true;
-    // element_priority_select.value = localStorage['helperHelping'];
+function displayCurrentPosition() {
     console.log(localStorage['helperWaitNum']);
     if (localStorage['helperWaitNum'] > 0) {
         removeClass(element_wait_count, 'display_none');
@@ -90,6 +89,16 @@ function displayPostingHelp() {
         console.log('your_turn');
         removeClass(element_your_turn, 'display_none');
     }
+}
+
+function displayPostingHelp() {
+    addClass(element_post_button, 'display_none');
+    removeClass(element_posting_button, 'display_none');
+    element_question_textarea.disabled = true;
+    element_question_textarea.value = localStorage['helperHelping'];
+    displayCurrentPosition();
+    // element_priority_select.disabled = true;
+    // element_priority_select.value = localStorage['helperHelping'];
 }
 
 function processConfirm(response) {
@@ -169,7 +178,9 @@ function processPost(response) {
     var data = JSON.parse(response);
     if (data['code'] === 1) {
         localStorage['helperHelping'] = question;
+        localStorage['helperWaitNum'] = data['data'];
         displayPostingHelp();
+        displayCurrentPosition();
     }
 }
 
@@ -247,6 +258,10 @@ function main() {
 
 function l(msg) {
     console.log(msg);
+}
+
+String.prototype.trim = function() {
+    return this.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 }
 
 // userLogout();
