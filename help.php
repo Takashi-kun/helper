@@ -50,6 +50,6 @@ if ($flg !== true) {
 $ret['code'] = 1;
 $ret['msg'] = Util::getErrorMsg($ret['code']);
 $count = $db->getWaitCount(intval($user['id']));
-$ret['data'] = intval($count['user']) - intval($count['now']);
+$ret['data'] = intval($count['cnt']) - 1;
 Util::echoJSON($ret);
 

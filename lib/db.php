@@ -32,9 +32,13 @@ class DbWrap {
     }
 
     public function getWaitCount($user_id) {
-        $sql = 'SELECT (SELECT id FROM help_log WHERE is_solved = 0 GROUP BY is_solved) AS now, ';
-        $sql .= ' (SELECT id FROM help_log WHERE is_solved = 0 AND user_profile_id = :user_id GROUP BY is_solved) AS user ';
-        $sql .= ' FROM help_log WHERE is_solved = 0 GROUP BY is_solved';
+        //$sql = 'SELECT (SELECT id FROM help_log WHERE is_solved = 0 GROUP BY is_solved) AS now, ';
+        //$sql .= ' (SELECT id FROM help_log WHERE is_solved = 0 AND user_profile_id = :user_id GROUP BY is_solved) AS user ';
+        //$sql .= ' FROM help_log WHERE is_solved = 0 GROUP BY is_solved';
+//        $sql = 'SELECT * FROM help_log WHERE is_solved = 0';
+        $sql = 'SELECT COUNT(id) AS cnt FROM help_log WHERE is_solved =0 ';
+        $sql .= ' AND created_at <= (SELECT created_at FROM help_log ';
+        $sql .= ' WHERE user_profile_id = :user_id AND is_solved = 0) ';
 
         $this->stmt = $this->pdo->prepare($sql);
         $this->stmt->execute(
