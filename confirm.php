@@ -32,4 +32,3 @@ if ($flg !== false) {
 $ret['code'] = -5;
 $ret['msg'] = Util::getErrorMsg($ret['code']);
 Util::echoJSON($ret);
-
