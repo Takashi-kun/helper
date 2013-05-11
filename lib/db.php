@@ -94,7 +94,7 @@ class DbWrap {
                         );
 
         return $this->insert($sql, $placeholder);
-   }
+    }
 
     public function insertQuestionLog($data) {
         $sql = 'INSERT INTO question_log(user_profile_id, body) VALUES (:user_profile_id, :body)';
@@ -106,7 +106,7 @@ class DbWrap {
     }
 
     private function insert($sql, $placeholder) {
-         try {
+        try {
             $this->pdo->beginTransaction();
             $this->stmt = $this->pdo->prepare($sql);
             $this->stmt->execute($placeholder);
