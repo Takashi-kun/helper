@@ -30,7 +30,8 @@ if (Util::validate_body($question) !== true) {
 
 $ins_data = array();
 $ins_data['user_id'] = (int) $user['id'];
-$ins_data['question'] = htmlspecialchars($question);
+//$ins_data['question'] = htmlspecialchars($question);
+$ins_data['question'] = $question;
 
 
 
