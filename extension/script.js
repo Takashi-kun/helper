@@ -106,7 +106,7 @@ function processConfirm(response) {
     console.log(data);
     // まだHelpしていない時
     if (data['code'] === 1) {
-        localStorage['helperHelping'] = data['msg'];
+        // localStorage['helperHelping'] = data['msg'];
         localStorage['helperWaitNum'] = data['data'];
         displayPostingHelp();
     } else if (data['code'] === -5) {
