@@ -161,14 +161,14 @@ var firedClickSolve = function(target) {
 };
 
 var getAjax = function(sendUrl, sendType, sendData, callBackFunc) {
-    showLoading();
+    //showLoading();
     $.ajax({
         dataType: 'json',
         url: sendUrl,
         type: sendType,
         data: sendData,
         success: function(data) {
-            hideLoading();
+            //hideLoading();
             callBackFunc(data['data'], sendData);
             makePaging(Number(data['count']));
             return true;
@@ -204,9 +204,10 @@ var firedClickPaging = function(target) {
 }
 
 var errorAjax = function(msg) {
-    alert('申し訳ございません。サーバでエラーが発生しています。');
+    //alert('申し訳ございません。サーバでエラーが発生しています。');
+    console.log('Sorry, Server error was happend');
     console.log(msg);
-    hideLoading();
+    //hideLoading();
     return false;
 };
 

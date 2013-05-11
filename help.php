@@ -2,8 +2,8 @@
 
 require_once(dirname(__FILE__) . '/lib/util.php');
 
-$priority = $_POST['help_priority'];
 $user_name = $_POST['user_name'];
+$question  = $_POST['question'];
 
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: text/plain; charset=UTF-8');
@@ -20,15 +20,17 @@ if (isset($user['id']) !== true) {
     Util::echoJSON($ret);
 }
 
-if (Util::validate_priority($priority) !== true) {
+if (Util::validate_body($question) !== true) {
     $ret['code'] = -1;
     $ret['msg']  = Util::getErrorMsg($ret['code']);
     Util::echoJSON($ret);
 }
 
+
+
 $ins_data = array();
-$ins_data['priority'] = $priority;
 $ins_data['user_id'] = (int) $user['id'];
+$ins_data['question'] = htmlspecialchars($question);
 
 
 
