@@ -6,6 +6,9 @@ var element_post_form     = document.querySelector('#post_form');
 var element_post_button   = document.querySelector('#post_button');
 var element_posting_button = document.querySelector('#posting_button');
 var element_logout_button = document.querySelector('#logout_button');
+var element_your_turn     = document.querySelector('#your_turn');
+var element_wait_count    = document.querySelector('#wait_count');
+var element_wait_num      = document.querySelector('#wait_num');
 // DEPRECATED
 // var element_priority_select = document.querySelector('#post_form select');
 var element_question_textarea = document.querySelector('#post_form textarea');
@@ -19,7 +22,7 @@ element_posting_button.addEventListener('click', postSolved, false);
 element_login_button.addEventListener('click', userLogin, false);
 
 function checkLogin() {
-    console.log('userName:' + localStorage['helperUserName']);
+    // console.log('userName:' + localStorage['helperUserName']);
     if (typeof(localStorage['helperUserName']) !== 'undefined' &&
                localStorage['helperUserName']  !== null) {
         return true;
@@ -64,6 +67,9 @@ function displayHelp() {
 
 function displayNotPostingHelp() {
     delete localStorage['helperHelping'];
+    delete localStorage['helperWaitNum'];
+    addClass(element_wait_count, 'display_none');
+    addClass(element_your_turn, 'display_none');
     removeClass(element_post_button, 'display_none');
     addClass(element_posting_button, 'display_none');
     // element_priority_select.disabled = false;
@@ -76,16 +82,26 @@ function displayPostingHelp() {
     element_question_textarea.value = localStorage['helperHelping'];
     // element_priority_select.disabled = true;
     // element_priority_select.value = localStorage['helperHelping'];
+    console.log(localStorage['helperWaitNum']);
+    if (localStorage['helperWaitNum'] > 0) {
+        removeClass(element_wait_count, 'display_none');
+        element_wait_num.textContent = localStorage['helperWaitNum'];
+    } else if (localStorage['helperWaitNum'] == 0){
+        console.log('your_turn');
+        removeClass(element_your_turn, 'display_none');
+    }
 }
 
 function processConfirm(response) {
     var data = JSON.parse(response);
+    console.log(data);
     // まだHelpしていない時
     if (data['code'] === 1) {
-        displayNotPostingHelp();
-    } else if (data['code'] === -5) {
         localStorage['helperHelping'] = data['msg'];
+        localStorage['helperWaitNum'] = data['data'];
         displayPostingHelp();
+    } else if (data['code'] === -5) {
+        displayNotPostingHelp();
     }
 }
 
@@ -113,6 +129,7 @@ function confirmStatus() {
 // }
 
 function afterLogin() {
+    console.log('afterLogin');
     removeClass(element_post_form, 'display_none');
     addClass(element_login_form, 'display_none');
     user_name = localStorage['helperUserName'];
@@ -130,7 +147,7 @@ function processLogin(response) {
     if (data['code'] === 1) {
         localStorage['helperUserName'] = user_name;
         addClass(element_error_message, 'display_none');
-        console.log('login success');
+        // console.log('login success');
         element_user_name.value = '';
         afterLogin();
     } else {
@@ -151,7 +168,7 @@ function processSolve(response) {
 function processPost(response) {
     var data = JSON.parse(response);
     if (data['code'] === 1) {
-        localStorage['helperHelping'] = priority;
+        localStorage['helperHelping'] = question;
         displayPostingHelp();
     }
 }
@@ -190,16 +207,16 @@ function request(url, method, data, success, error) {
     var xhr = new XMLHttpRequest();
     xhr.open(method, url);
     xhr.onreadystatechange = function() {
-        console.log(xhr.readyState);
+        // console.log(xhr.readyState);
         if (xhr.readyState === 4) {
-            console.log(xhr.responseText);
+            // console.log(xhr.responseText);
             success(xhr.responseText);
         } else {
             error(xhr.responseText);
         }
     }
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    console.log(data);
+    // console.log(data);
     xhr.send(encodeParams(data));
 }
 

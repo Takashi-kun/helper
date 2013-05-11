@@ -19,14 +19,16 @@ if (isset($user['id']) !== true) {
     Util::echoJSON($ret);
 }
 
-$flg = $db->confirmDupplicateHelpLog($user['id']);
+$flg = $db->isUserHelping($user['id']);
 
 if ($flg !== false) {
-    $ret['code'] = -5;
-    $ret['msg'] = (int) $flg;
+    $ret['code'] = 1;
+    $ret['msg'] = 1;//Util::getErrorMsg($ret['code']);
+    $count = $db->getWaitCount(intval($user['id']));
+    $ret['data'] = intval($count['user']) - intval($count['now']);
     Util::echoJSON($ret);
 }
 
-$ret['code'] = 1;
+$ret['code'] = -5;
 $ret['msg'] = Util::getErrorMsg($ret['code']);
 Util::echoJSON($ret);

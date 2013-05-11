@@ -62,6 +62,10 @@ class DbWrap {
         return false;
     }
 
+    public function isUserHelping($user_id) {
+        return $this->checkDupplicateHelpLog($user_id);
+    }
+
     public function confirmDupplicateHelpLog($user_id) {
         $this->stmt = $this->pdo->prepare('SELECT priority FROM help_log WHERE user_profile_id = :user_id AND is_solved = 0');
         $this->stmt->execute(
@@ -82,11 +86,13 @@ class DbWrap {
             return -5;
         }
 
-        $sql = 'INSERT INTO help_log(user_profile_id, priority) VALUES (:user_profile_id, :priority)';
+        $sql = 'INSERT INTO help_log(user_profile_id, help_body) VALUES (:user_profile_id, :body)';
+
         $placeholder = array(
                             'user_profile_id' => $data['user_id'],
-                            'priority' => $data['priority']
+                            'body' => $data['question']
                         );
+
         return $this->insert($sql, $placeholder);
    }
 

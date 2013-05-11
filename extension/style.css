@@ -137,6 +137,23 @@ select {
     border-color: #51a351 #51a351 #387038;
 }
 
+#wait_count {
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+#wait_num {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#your_turn {
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    color: red;
+}
+
 .display_none {
     display: none;
 }
