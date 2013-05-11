@@ -6,10 +6,14 @@ var element_post_form     = document.querySelector('#post_form');
 var element_post_button   = document.querySelector('#post_button');
 var element_posting_button = document.querySelector('#posting_button');
 var element_logout_button = document.querySelector('#logout_button');
-var element_priority_select = document.querySelector('#post_form select');
-var user_name, priority;
+// DEPRECATED
+// var element_priority_select = document.querySelector('#post_form select');
+var element_question_textarea = document.querySelector('#post_form textarea');
+// var user_name, priority;
+var user_name;
+var question;
 
-element_post_button.addEventListener('click', postPriority, false);
+element_post_button.addEventListener('click', postQuestion, false);
 element_posting_button.addEventListener('click', postSolved, false);
 // element_logout_button.addEventListener('click', userLogout, false);
 element_login_button.addEventListener('click', userLogin, false);
@@ -28,10 +32,18 @@ function postSolved(event) {
     return stopSubmit(event);
 }
 
-function postPriority(event) {
-    priority = element_priority_select.value;
+// DEPRECATED
+// function postPriority(event) {
+//     priority = element_priority_select.value;
+//     request(SERVER + '/help.php', 'POST',
+//             {user_name: user_name, help_priority: priority}, processPost, processError);
+//     return stopSubmit(event);
+// }
+
+function postQuestion(event) {
+    question = element_question_textarea.value;
     request(SERVER + '/help.php', 'POST',
-            {user_name: user_name, help_priority: priority}, processPost, processError);
+            {user_name: user_name, question: question}, processPost, processError);
     return stopSubmit(event);
 }
 
@@ -54,14 +66,16 @@ function displayNotPostingHelp() {
     delete localStorage['helperHelping'];
     removeClass(element_post_button, 'display_none');
     addClass(element_posting_button, 'display_none');
-    element_priority_select.disabled = false;
+    // element_priority_select.disabled = false;
 }
 
 function displayPostingHelp() {
     addClass(element_post_button, 'display_none');
     removeClass(element_posting_button, 'display_none');
-    element_priority_select.disabled = true;
-    element_priority_select.value = localStorage['helperHelping'];
+    element_question_textarea.disabled = true;
+    element_question_textarea.value = localStorage['helperHelping'];
+    // element_priority_select.disabled = true;
+    // element_priority_select.value = localStorage['helperHelping'];
 }
 
 function processConfirm(response) {
@@ -80,22 +94,23 @@ function confirmStatus() {
            {user_name: user_name}, processConfirm, processError);
 }
 
-function processPriority(response) {
-    var choices = JSON.parse(response);
-    element_priority_select.textContent = '';
-    for (var i in choices) {
-        var option = document.createElement('option');
-        if (typeof(choices[i]['id']) !== 'undefined' && choices[i]['id'] !== null) {
-            option.value = choices[i]['id'];
-            option.textContent = choices[i]['body'];
-            element_priority_select.appendChild(option);
-        }
-    }
-}
+// function processPriority(response) {
+//     var choices = JSON.parse(response);
+//     // element_priority_select.textContent = '';
+//     element_question_textarea.value = '';
+//     for (var i in choices) {
+//         var option = document.createElement('option');
+//         if (typeof(choices[i]['id']) !== 'undefined' && choices[i]['id'] !== null) {
+//             option.value = choices[i]['id'];
+//             option.textContent = choices[i]['body'];
+//             element_priority_select.appendChild(option);
+//         }
+//     }
+// }
 
-function displayPriority() {
-    request(SERVER + '/priority.php', 'POST', '', processPriority, processError);
-}
+// function displayPriority() {
+//     request(SERVER + '/priority.php', 'POST', '', processPriority, processError);
+// }
 
 function afterLogin() {
     removeClass(element_post_form, 'display_none');
@@ -103,7 +118,7 @@ function afterLogin() {
     user_name = localStorage['helperUserName'];
     displayHelp();
     confirmStatus();
-    displayPriority();
+    // displayPriority();
 }
 
 function processError(response) {
@@ -171,6 +186,7 @@ function removeClass(element, className) {
 }
 
 function request(url, method, data, success, error) {
+    l(data);
     var xhr = new XMLHttpRequest();
     xhr.open(method, url);
     xhr.onreadystatechange = function() {
@@ -210,6 +226,10 @@ function main() {
     } else {
         beforeLogin();
     }
+}
+
+function l(msg) {
+    console.log(msg);
 }
 
 // userLogout();
