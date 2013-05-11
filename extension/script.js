@@ -142,7 +142,7 @@ function afterLogin() {
     removeClass(element_post_form, 'display_none');
     addClass(element_login_form, 'display_none');
     user_name = localStorage['helperUserName'];
-    displayHelp();
+    // displayHelp();
     confirmStatus();
     // displayPriority();
 }
