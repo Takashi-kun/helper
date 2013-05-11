@@ -31,3 +31,4 @@ $ret['code'] = 1;
 $ret['msg'] = Util::getErrorMsg($ret['code']);
 Util::echoJSON($ret);
 
+?>
