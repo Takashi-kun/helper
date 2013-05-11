@@ -227,6 +227,7 @@ var makeTable = function(data, sendData) {
                 continue;
             }
             var td = $('<td/>');
+            td.addClass(key);
             td.text(obj[key]);
             td.appendTo(tr);
        }
@@ -290,5 +291,6 @@ var makeThead = function(type) {
         th.text(HELP_THEAD[type][i]);
         th.appendTo(tr);
     }
-    return tr;
+    tr.appendTo(thead);
+    return thead;
 };

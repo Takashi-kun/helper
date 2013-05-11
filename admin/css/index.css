@@ -11,6 +11,11 @@
     display: none;
 }
 
+td.help_body {
+    max-width: 350px;
+    overflow: scroll;
+}
+
 .question_textarea {
     width: 97%;
     height: 50px;
