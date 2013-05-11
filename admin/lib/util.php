@@ -67,7 +67,7 @@ class Util extends Constants {
             // $sql .= ' FROM question_log t1 LEFT JOIN user_profile t2 ON t1.user_profile_id = t2.id ';
             // $sql .= ' ORDER BY t1.priority DESC, t1.created_at DESC ';
             $sql = 'SELECT * FROM priority_mst ';
-            $sql .= ' ORDER BY created_at DESC';
+            $sql .= ' ORDER BY id DESC';
         }
 
         return $sql;
