@@ -1,8 +1,8 @@
 {
     "name": "CY Helper",
     "description": "講師と新卒をつなぎます",
-    "manifest_version": 2,
-    "version": "1.0",
+    "manifest_version": 3,
+    "version": "1.0.1",
     "browser_action": {
         "default_icon": "icon.png",
         "default_popup": "popup.html"
