@@ -92,7 +92,7 @@ function displayPostingHelp() {
     }
 }
 
-function processConfirm(response) {
+function processConfirmo(response) {
     var data = JSON.parse(response);
     console.log(data);
     // まだHelpしていない時
@@ -138,22 +138,22 @@ function afterLogin() {
     // displayPriority();
 }
 
-function processError(response) {
+function processError(errorMessage) {
     // console.log(response);
+    removeClass(element_error_message, 'display_none');
+    element_error_message.textContent = errorMessage;
 }
 
 function processLogin(response) {
     var data = JSON.parse(response);
     if (data['code'] === 1) {
         localStorage['helperUserName'] = user_name;
-        addClass(element_error_message, 'display_none');
         // console.log('login success');
         element_user_name.value = '';
         afterLogin();
     } else {
         delete localStorage['helperUserName'];
-        removeClass(element_error_message, 'display_none');
-        element_error_message.textContent = data['msg'];
+        processError(data['msg']);
     }
 }
 
@@ -203,6 +203,7 @@ function removeClass(element, className) {
 }
 
 function request(url, method, data, success, error) {
+    addClass(element_error_message, 'display_none');
     l(data);
     var xhr = new XMLHttpRequest();
     xhr.open(method, url);
@@ -210,9 +211,11 @@ function request(url, method, data, success, error) {
         // console.log(xhr.readyState);
         if (xhr.readyState === 4) {
             // console.log(xhr.responseText);
-            success(xhr.responseText);
-        } else {
-            error(xhr.responseText);
+            if (xhr.status === 200) {
+                success(xhr.responseText);
+            } else {
+                error(xhr.responseText);
+            }
         }
     }
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
