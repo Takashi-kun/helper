@@ -1,4 +1,3 @@
-const DEBUG = true;
-const SERVER = 'http://192.168.11.3/helper';
+const SERVER = 'http://192.168.0.6/helper';
 
 
