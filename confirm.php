@@ -25,7 +25,7 @@ if ($flg !== false) {
     $ret['code'] = 1;
     $ret['msg'] = 1;//Util::getErrorMsg($ret['code']);
     $count = $db->getWaitCount(intval($user['id']));
-    $ret['data'] = intval($count['cnt']) - 1;
+    $ret['data'] = intval($count['cnt']);
     Util::echoJSON($ret);
 }
 
