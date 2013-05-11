@@ -3,7 +3,7 @@
 class Constants {
     protected static $ERROR_CODES = array(
         1 => 'success',
-        0 => 'No user registed',
+        0 => 'ユーザー登録されていません',
 //        -1 => 'No priority checked',
         -1 => 'No question inserted',
         -2 => 'Missed save help',
