@@ -8,7 +8,8 @@ class DbWrap {
     public function __construct() {
         try {
             $this->pdo = new PDO(Constants::DB_HOST, Constants::DB_USER, Constants::DB_PASS);
-            $this->stmt = $this->pdo->query('SET NAMES utf8;');
+            //$this->stmt = $this->pdo->query('SET NAMES utf8;');
+            $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         } catch (PDOException $e) {
             error_log($e->getMessage() . ' ' . strtotime('now'));
         }
