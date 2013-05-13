@@ -1,4 +1,4 @@
-var AJAX_URL = 'http://dev.helper/admin/api.php';
+var AJAX_URL = 'http://tad.jpw.jp/admin/api.php';
 var HELP_THEAD = {
     'user': ['id', '名前', '生成日時'],
     'help': ['id', '名前', '質問内容', '質問詳細', '送信日時', '解決'],

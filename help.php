@@ -3,7 +3,7 @@
 require_once(dirname(__FILE__) . '/lib/util.php');
 
 $user_name = $_POST['user_name'];
-$question  = $_POST['question'];
+$question  = preg_replace('/(\s|　)/','',$_POST['question']);
 
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: text/plain; charset=UTF-8');
